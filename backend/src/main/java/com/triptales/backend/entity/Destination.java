@@ -22,10 +22,10 @@ public class Destination {
     @Column(length = 100)
     private String country;
 
-    @Column(precision = 10, scale = 7)
+    @Column
     private Double latitude;
 
-    @Column(precision = 10, scale = 7)
+    @Column
     private Double longitude;
 
     @Column(columnDefinition = "TEXT")
