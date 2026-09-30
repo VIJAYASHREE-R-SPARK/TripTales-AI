@@ -4,6 +4,7 @@ import com.triptales.backend.entity.Photo;
 import com.triptales.backend.service.PhotoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class PhotoController {
         this.photoService = photoService;
     }
 
+    // Create photo metadata
     @PostMapping
     public ResponseEntity<Photo> createPhoto(
             @RequestBody Photo photo) {
@@ -27,6 +29,25 @@ public class PhotoController {
         );
     }
 
+    // Upload actual image file
+    @PostMapping("/upload")
+    public ResponseEntity<Photo> uploadPhoto(
+            @RequestParam("postId") Long postId,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "caption", required = false) String caption,
+            @RequestParam(value = "displayOrder", required = false) Integer displayOrder) {
+
+        return ResponseEntity.ok(
+                photoService.uploadPhoto(
+                        postId,
+                        file,
+                        caption,
+                        displayOrder
+                )
+        );
+    }
+
+    // Get all photos
     @GetMapping
     public ResponseEntity<List<Photo>> getAllPhotos() {
 
@@ -35,6 +56,7 @@ public class PhotoController {
         );
     }
 
+    // Get photo by ID
     @GetMapping("/{photoId}")
     public ResponseEntity<Photo> getPhotoById(
             @PathVariable Long photoId) {
@@ -44,6 +66,7 @@ public class PhotoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Get photos by post
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<Photo>> getPhotosByPost(
             @PathVariable Long postId) {
@@ -53,6 +76,7 @@ public class PhotoController {
         );
     }
 
+    // Search photos by caption
     @GetMapping("/search")
     public ResponseEntity<List<Photo>> searchPhotos(
             @RequestParam String caption) {
@@ -62,6 +86,7 @@ public class PhotoController {
         );
     }
 
+    // Update photo
     @PutMapping("/{photoId}")
     public ResponseEntity<Photo> updatePhoto(
             @PathVariable Long photoId,
@@ -72,6 +97,7 @@ public class PhotoController {
         );
     }
 
+    // Delete photo
     @DeleteMapping("/{photoId}")
     public ResponseEntity<Void> deletePhoto(
             @PathVariable Long photoId) {
