@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar.jsx";
 
-import Home from "../pages/Home";
-import Explore from "../pages/Explore";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import Profile from "../pages/Profile";
-import CreatePost from "../pages/CreatePost";
-import Notifications from "../pages/Notifications";
+import Home from "../pages/Home.jsx";
+import Explore from "../pages/Explore.jsx";
+import Login from "../pages/Login.jsx";
+import Register from "../pages/Register.jsx";
+import Profile from "../pages/Profile.jsx";
+import CreatePost from "../pages/CreatePost.jsx";
+import Notifications from "../pages/Notifications.jsx";
 
 function App() {
   return (
