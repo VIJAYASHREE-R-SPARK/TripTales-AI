@@ -17,11 +17,19 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Temporary logged-in user
-  const userId = 7;
+  // Get the currently logged-in user
+const storedUser = JSON.parse(
+  localStorage.getItem("triptalesUser") || "null"
+);
 
+const userId = Number(storedUser?.userId);
   useEffect(() => {
     const fetchProfileData = async () => {
+      if (!storedUser?.userId) {
+          setError("Please login to view your profile.");
+          setLoading(false);
+          return;
+      }
       try {
         setLoading(true);
         setError("");
