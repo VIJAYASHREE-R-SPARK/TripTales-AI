@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function Explore() {
-  const CURRENT_USER_ID = 7;
+  const storedUser = JSON.parse(
+localStorage.getItem("triptalesUser") || "null"
+);
+
+const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
+
 
   const [posts, setPosts] = useState([]);
   const [postPhotos, setPostPhotos] = useState({});
@@ -232,7 +237,7 @@ function Explore() {
                     `http://localhost:8080/api/follows/check?followerId=${CURRENT_USER_ID}&followingId=${userId}`
                   ),
                   axios.get(
-                    `http://localhost:8080/api/follows/user/${userId}`
+                    `http://localhost:8080/api/follows/followers/${userId}`
                   ),
                 ]);
 
@@ -472,12 +477,20 @@ function Explore() {
         }));
       }
     } catch (error) {
-      console.error("Follow toggle error:", error);
+console.error("Follow toggle error:", error);
+console.error("Error response:", error.response?.data);
+console.error("Error status:", error.response?.status);
 
-      alert("Unable to update follow. Please try again.");
-    } finally {
-      setFollowingUserId(null);
-    }
+alert(
+`Unable to update follow. ${
+      error.response?.data?.message ||
+      error.response?.data ||
+      error.message
+    }`
+);
+} finally {
+setFollowingUserId(null);
+}
   };
 
   // ============================

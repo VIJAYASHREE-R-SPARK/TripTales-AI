@@ -13,10 +13,12 @@ function CreatePost() {
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+// Get the logged-in user from localStorage
+const storedUser = JSON.parse(
+  localStorage.getItem("triptalesUser") || "null"
+);
 
-  // Temporary logged-in user
-  const userId = 7;
-
+const userId = Number(storedUser?.userId);
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -48,6 +50,11 @@ function CreatePost() {
 
     setMessage("");
     setError("");
+    if (!userId || Number.isNaN(userId)) {
+    setError("Please login before creating a post.");
+    return;
+  }
+
 
     try {
       // --------------------------------

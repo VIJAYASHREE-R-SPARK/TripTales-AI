@@ -28,6 +28,7 @@ function Login() {
 
     try {
       const response = await loginUser(formData);
+      //console.log("Login response:", response);
       // Store logged-in user details
       localStorage.setItem(
         "triptalesUser",
