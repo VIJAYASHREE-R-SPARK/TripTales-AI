@@ -9,6 +9,7 @@ import Register from "../pages/Register.jsx";
 import Profile from "../pages/Profile.jsx";
 import CreatePost from "../pages/CreatePost.jsx";
 import Notifications from "../pages/Notifications.jsx";
+import Settings from "../pages/Settings.jsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );

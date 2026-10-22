@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import API_BASE_URL from "../services/api";
 function Profile() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -23,6 +23,7 @@ const storedUser = JSON.parse(
 );
 
 const userId = Number(storedUser?.userId);
+console.log("Profile User ID:", userId);
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!storedUser?.userId) {
@@ -34,31 +35,36 @@ const userId = Number(storedUser?.userId);
         setLoading(true);
         setError("");
 
-        const [
-          userResponse,
-          postsResponse,
-          followsResponse,
-          savesResponse,
-          memoriesResponse,
-        ] = await Promise.all([
-          axios.get(`http://localhost:8080/api/users/${userId}`),
-          axios.get("http://localhost:8080/api/posts"),
-          axios.get("http://localhost:8080/api/follows"),
-          axios.get(`http://localhost:8080/api/saves/user/${userId}`),
-          axios.get(
-            `http://localhost:8080/api/travel-memories/user/${userId}`
-          ),
-        ]);
+        
+    const [
+        userResponse,
+        postsResponse,
+        followersResponse,
+        followingResponse,
+        savesResponse,
+        memoriesResponse,
+    ] = await Promise.all([
+    axios.get(`${API_BASE_URL}/users/${userId}`),
+    axios.get(`${API_BASE_URL}/posts`),
+    axios.get(`${API_BASE_URL}/follows/followers/${userId}`),
+    axios.get(`${API_BASE_URL}/follows/following/${userId}`),
+    axios.get(`${API_BASE_URL}/saves/user/${userId}`),
+    axios.get(`${API_BASE_URL}/travel-memories/user/${userId}`)
+    ]);
+
+
 
         console.log("User:", userResponse.data);
         console.log("Posts:", postsResponse.data);
-        console.log("Follows:", followsResponse.data);
+        console.log("Followers:", followersResponse.data);
+        console.log("Following:", followingResponse.data);
         console.log("Saved Posts:", savesResponse.data);
         console.log("Travel Memories:", memoriesResponse.data);
 
         setUser(userResponse.data);
         setPosts(postsResponse.data || []);
-        setFollows(followsResponse.data || []);
+        setFollows(followersResponse.data || []);
+        setFollows(followingResponse.data || []);
         setSavedPosts(savesResponse.data || []);
         setTravelMemories(memoriesResponse.data || []);
 
@@ -72,7 +78,7 @@ const userId = Number(storedUser?.userId);
           currentUserPosts.map(async (post) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/photos/post/${post.postId}`
+                `${API_BASE_URL}/photos/post/${post.postId}`
               );
 
               return {
@@ -117,7 +123,7 @@ const userId = Number(storedUser?.userId);
           currentSavedPosts.map(async (post) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/photos/post/${post.postId}`
+                 `${API_BASE_URL}/photos/post/${post.postId}`
               );
 
               return {
@@ -167,6 +173,7 @@ const userId = Number(storedUser?.userId);
   );
 
   // People following this user
+  
   const followers = follows.filter(
     (follow) => Number(follow.followingId) === userId
   );
@@ -199,7 +206,7 @@ const userId = Number(storedUser?.userId);
         {/* Travel Photo */}
         {firstPhoto ? (
           <img
-            src={`http://localhost:8080${firstPhoto.imageUrl}`}
+            src={`${API_BASE_URL.replace(/\/api$/, "")}${firstPhoto.imageUrl}`}
             alt={post.title}
             style={{
               width: "100%",

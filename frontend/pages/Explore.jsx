@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import API_BASE_URL from "../services/api";
 function Explore() {
   const storedUser = JSON.parse(
 localStorage.getItem("triptalesUser") || "null"
@@ -34,10 +34,10 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
         setError("");
 
         const [postsResponse, destinationsResponse] =
-          await Promise.all([
-            axios.get("http://localhost:8080/api/posts"),
-            axios.get("http://localhost:8080/api/destinations"),
-          ]);
+            await Promise.all([
+               axios.get(`${API_BASE_URL}/posts`),
+               axios.get(`${API_BASE_URL}/destinations`),
+            ]);
 
         const postsData = postsResponse.data;
         const destinationsData = destinationsResponse.data;
@@ -53,7 +53,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
           postsData.map(async (post) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/photos/post/${post.postId}`
+                `${API_BASE_URL}/photos/post/${post.postId}`
               );
 
               return {
@@ -90,7 +90,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
           postsData.map(async (post) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/likes/post/${post.postId}`
+                `${API_BASE_URL}/likes/post/${post.postId}`
               );
 
               const likes = response.data || [];
@@ -136,7 +136,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
           postsData.map(async (post) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/saves/post/${post.postId}`
+                `${API_BASE_URL}/saves/post/${post.postId}`
               );
 
               const saves = response.data || [];
@@ -182,7 +182,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
           postsData.map(async (post) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/comments/post/${post.postId}`
+                `${API_BASE_URL}/comments/post/${post.postId}`
               );
 
               return {
@@ -234,10 +234,10 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
               const [checkResponse, followersResponse] =
                 await Promise.all([
                   axios.get(
-                    `http://localhost:8080/api/follows/check?followerId=${CURRENT_USER_ID}&followingId=${userId}`
+                    `${API_BASE_URL}/follows/check?followerId=${CURRENT_USER_ID}&followingId=${userId}`
                   ),
                   axios.get(
-                    `http://localhost:8080/api/follows/followers/${userId}`
+                    `${API_BASE_URL}/follows/followers/${userId}`
                   ),
                 ]);
 
@@ -313,7 +313,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
       if (currentLikeData.likedByCurrentUser) {
         // UNLIKE
         await axios.delete(
-          `http://localhost:8080/api/likes/remove?userId=${CURRENT_USER_ID}&postId=${postId}`
+          `${API_BASE_URL}/likes/remove?userId=${CURRENT_USER_ID}&postId=${postId}`
         );
 
         setPostLikes((previousLikes) => ({
@@ -325,7 +325,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
         }));
       } else {
         // LIKE
-        await axios.post("http://localhost:8080/api/likes", {
+        axios.post(`${API_BASE_URL}/likes`, {
           postId: postId,
           userId: CURRENT_USER_ID,
         });
@@ -367,7 +367,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
       if (currentSaveData.savedByCurrentUser) {
         // UNSAVE
         await axios.delete(
-          `http://localhost:8080/api/saves/remove?userId=${CURRENT_USER_ID}&postId=${postId}`
+          `${API_BASE_URL}/saves/remove?userId=${CURRENT_USER_ID}&postId=${postId}`
         );
 
         setPostSaves((previousSaves) => ({
@@ -379,7 +379,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
         }));
       } else {
         // SAVE
-        await axios.post("http://localhost:8080/api/saves", {
+        await axios.post(`${API_BASE_URL}/saves`, {
           postId: postId,
           userId: CURRENT_USER_ID,
         });
@@ -428,25 +428,16 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
         // UNFOLLOW
 
         const followResponse = await axios.get(
-          `http://localhost:8080/api/follows/check?followerId=${CURRENT_USER_ID}&followingId=${numericUserId}`
+          `${API_BASE_URL}/follows/check?followerId=${CURRENT_USER_ID}&followingId=${numericUserId}`
         );
+        console.log("Follow check response:", followResponse.data);
 
         if (followResponse.data) {
-          const followsResponse = await axios.get(
-            `http://localhost:8080/api/follows/user/${numericUserId}`
+          await axios.delete(
+            `${API_BASE_URL}/follows/remove?followerId=${CURRENT_USER_ID}&followingId=${numericUserId}`
           );
 
-          const currentFollow = (followsResponse.data || []).find(
-            (follow) =>
-              Number(follow.followerId) === CURRENT_USER_ID &&
-              Number(follow.followingId) === numericUserId
-          );
-
-          if (currentFollow?.followId) {
-            await axios.delete(
-              `http://localhost:8080/api/follows/${currentFollow.followId}`
-            );
-          }
+        console.log("Unfollow successful");
         }
 
         setPostFollows((previousFollows) => ({
@@ -462,7 +453,7 @@ const CURRENT_USER_ID = Number(storedUser?.userId) || 0;
       } else {
         // FOLLOW
 
-        await axios.post("http://localhost:8080/api/follows", {
+        await axios.post(`${API_BASE_URL}/follows`, {
           followerId: CURRENT_USER_ID,
           followingId: numericUserId,
         });
@@ -511,8 +502,7 @@ setFollowingUserId(null);
     try {
       setCommentingPostId(postId);
 
-      const response = await axios.post(
-        "http://localhost:8080/api/comments",
+      const response = await axios.post(`${API_BASE_URL}/comments`,
         {
           content: text,
           postId: postId,
@@ -943,8 +933,9 @@ setFollowingUserId(null);
               const fullImageUrl =
                 imageUrl &&
                 imageUrl.startsWith("/")
-                  ? `http://localhost:8080${imageUrl}`
+                  ? `${API_BASE_URL.replace(/\/api$/, "")}${imageUrl}`
                   : imageUrl;
+
 
               const likeData =
                 postLikes[post.postId] || {

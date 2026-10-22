@@ -22,7 +22,10 @@ function Navbar() {
       <div className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/explore">Explore</Link>
+        <Link to="/settings">Settings</Link>
+        <Link to="/notifications">Notifications</Link>
         <Link to="/create-post">Create Post</Link>
+
         <Link to="/profile">Profile</Link>
 
         {storedUser ? (
@@ -30,8 +33,13 @@ function Navbar() {
             Logout
           </button>
         ) : (
-          <Link to="/login">Login</Link>
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
         )}
+```
+
       </div>
     </nav>
   );

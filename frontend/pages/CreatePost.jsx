@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-
+import API_BASE_URL from "../services/api";
 function CreatePost() {
   const [formData, setFormData] = useState({
     title: "",
@@ -70,8 +70,8 @@ const userId = Number(storedUser?.userId);
       };
 
       const postResponse = await axios.post(
-        "http://localhost:8080/api/posts",
-        postData
+        `${API_BASE_URL}/posts`,
+         postData
       );
 
       const createdPost = postResponse.data;
@@ -99,10 +99,9 @@ const userId = Number(storedUser?.userId);
         );
 
         const photoResponse = await axios.post(
-          "http://localhost:8080/api/photos/upload",
+          `${API_BASE_URL}/photos/upload`,
           photoData
         );
-
         console.log(
           "Photo uploaded:",
           photoResponse.data

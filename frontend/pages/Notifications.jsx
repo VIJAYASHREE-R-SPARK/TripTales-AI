@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import API_BASE_URL from "../services/api";
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // Temporary logged-in user for testing
-  const userId = 4;
+  const storedUser = JSON.parse(
+    localStorage.getItem("triptalesUser") || "null"
+  );
+
+  const userId = Number(storedUser?.userId);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -16,7 +20,7 @@ function Notifications() {
         setError("");
 
         const response = await axios.get(
-          `http://localhost:8080/api/notifications/user/${userId}`
+           `${API_BASE_URL}/notifications/user/${userId}`
         );
 
         console.log("Notifications:", response.data);
