@@ -16,7 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOriginPatterns(
                         "https://*.vercel.app",
-                        "http://localhost:5173"
+                        "http://localhost:5173",
+                        "http://localhost:5174"
+
                 )
                 .allowedMethods(
                         "GET", "POST", "PUT",
